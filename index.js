@@ -4,10 +4,20 @@ const jogos = [];
 const lerIndice = mensagem => parseInt(prompt(mensagem))
 const nomeInvalido = nome => nome == "" 
 
-const indiceInvalido = indice => {
-   return indice < 0 || indice >= jogos.length || isNaN(indice)
-}
-const modelo = () => {
+const indiceInvalido = indice =>  indice < 0 || indice >= jogos.length || isNaN(indice)
+
+const listagem = () =>
+   jogos.forEach((jogo, i) => { 
+      let sequencia
+      if(jogo.sequencia != -1) {
+          sequencia = jogos[jogo.sequencia].nome
+      } else {
+          sequencia = "Não possui sequência"
+      }
+      console.log(`${i + 1} - ${jogo.nome} - ${jogo.ano} - ${jogo.duracao} - ${jogo.preco} - ${jogo.estudio} - ${sequencia}`)
+  })
+
+  const modelo = () => {
 
    let jogo = {}
    
@@ -38,11 +48,11 @@ const modelo = () => {
       }
       
       while(true) { 
-         jogos.preco = Number(prompt("Qual é a preço do jogo? ").replaceAll(",", "."));
-         if(jogo.preco != 0 || isNaN(preco.ano)) {
+         jogo.preco = Number(prompt("Qual é a preço do jogo? ").replaceAll(",", "."));
+         if(jogo.preco === 0 || isNaN(jogo.preco)) {
             console.log("O preço é invalido ");
          }else {
-            break
+            break;
          }
       }
 
@@ -57,12 +67,14 @@ const modelo = () => {
       while(true) { 
          
          if(jogos.length == 0 ) {
-            jogo.sequencia = undefined;
+            jogo.sequencia = -1
          break
       }
-      jogo.sequencia = parseInt(prompt("Qual é a sequencia do jogo? "));
+
+      listagem()
+      jogo.sequencia = parseInt("Qual é a sequencia do jogo? Digite 0 caso não houver sequencia ") - 1;
       
-      if(indiceInvalido(jogo.sequencia)){
+      if(jogo.sequencia != - 1 && indiceInvalido(jogo.sequencia)){
          console.log("A sequencia é invalida: ")
       } else {
          break
@@ -77,9 +89,6 @@ const criar = () => {
 
 console.log("Jogo criado com sucesso! ")
 }
-const listagem = () => 
-   jogos.forEach((jogo, i) => console.log(`${i + 1} - ${jogo.nome} - ${jogo.ano} - ${jogo.duracao} - ${jogo.preco}
-   - ${jogo.estudio} - ${jogo.sequencia}`))
 
    const atualizar = () => {
 
@@ -89,7 +98,10 @@ const listagem = () =>
          console.log("Lista de jogos vazia ")
          break
       }
-   const indice = lerIndice("Qual é o indice do jogo que deseja atualizar? ")
+
+      listagem()
+
+   const indice = lerIndice("Qual é o indice do jogo que deseja atualizar? ") - 1
 
    if(indiceInvalido(indice)) {
       console.log("Indice inválido ")
@@ -102,11 +114,31 @@ const listagem = () =>
   }
 
   const remover = () => {
+  
    while(true){
-      const indice = lerIndice("Qual é o indice do jogo que deseja remover?")
+  
+   listagem()
+      const indice = lerIndice("Qual é o indice do jogo que deseja remover?") - 1
 
       if(indiceInvalido(indice)){
          console.log("Indice inválido ")
-      }
+      }else {
+         
+         jogos.forEach((jogo, i) => {
+            if(jogo.sequencia == indice){
+               jogos.sequencia = - 1
+               
+            }
+         })
+     jogos.splice(indice, 1)
+   console.log("Jogo removido com sucesso") 
+      break
+   }
    }
   }
+  module.exports = {
+   criar,
+   atualizar,
+   remover,
+   listagem
+  };
